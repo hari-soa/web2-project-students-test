@@ -7,7 +7,7 @@ import {
   updateStudent,
   updateStudentPartially,
   deleteStudent,
-} from "../controllers/student.controller";
+} from "../controllers/studentController";
 
 const router = Router();
 

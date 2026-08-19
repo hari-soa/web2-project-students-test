@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import * as studentRepository from "../repositories/student.repository";
+import * as studentRepository from "../repositories/studentRepository";
 import { Student } from "../models/studentModel";
 
 // GET /students

@@ -1,7 +1,7 @@
 import express from "express";
 
-import studentRoutes from "./routes/student.routes";
-import { errorMiddleware } from "./middlewares/error.middleware";
+import studentRoutes from "../routes/studentRoutes";
+import { errorMiddleware } from "../middlewares/error";
 
 const app = express();
 
