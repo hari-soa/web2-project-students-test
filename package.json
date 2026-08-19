@@ -6,7 +6,7 @@
     "start": "tsx src/server/server.ts"
   },
   "dependencies": {
-    "express": "^5.0.0"
+    "express": "^5.2.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
