@@ -1,32 +1,34 @@
 import { Request, Response, NextFunction } from "express";
-import { students } from "../configuration/data";
+import * as studentRepository from "../repositories/student.repository";
+import { Student } from "../models/student.model";
 
-// GET /etudiants
-export const getStudent = (req: Request, res: Response) => {
+// GET /students
+export const getAllStudents = (req: Request, res: Response) => {
+  const students = studentRepository.findAllStudents();
   res.status(200).json(students);
 };
 
-// GET /etudiants/:id
-export const getStudents = (
+// GET /students/:id
+export const getStudentById = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const id = Number(req.params.id);
 
-  const student = students.find((e) => e.id === id);
+  const student = studentRepository.findStudentById(id);
 
   if (!student) {
-    const erreur = new Error("students not found");
-    (erreur as any).status = 404;
-    return next(erreur);
+    const error = new Error("student not found");
+    (error as any).status = 404;
+    return next(error);
   }
 
   res.status(200).json(student);
 };
 
-// POST /etudiants
-export const addStudents = (
+// POST /students
+export const addStudent = (
   req: Request,
   res: Response,
   next: NextFunction,
@@ -34,111 +36,101 @@ export const addStudents = (
   const { name, age, email } = req.body;
 
   if (!name || !age || !email) {
-    const erreur = new Error("name, age, email requiered");
-
-    (erreur as any).status = 400;
-
-    return next(erreur);
+    const error = new Error("name, age, email required");
+    (error as any).status = 400;
+    return next(error);
   }
 
-  const newStudent = {
-    id: students.length + 1,
+  const newStudent: Student = {
+    id: studentRepository.getNextId(),
     name,
     age,
     email,
   };
 
-  students.push(newStudent);
+  studentRepository.createStudent(newStudent);
 
   res.status(201).json(newStudent);
 };
 
-// PUT /etudiants/:id
-export const modifyStudents = (
+// PUT /students/:id
+export const updateStudent = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const id = Number(req.params.id);
 
-  const student = students.find((e) => e.id === id);
+  const existingStudent = studentRepository.findStudentById(id);
 
-  if (!student) {
-    const erreur = new Error("students not found");
-    (erreur as any).status = 404;
-    return next(erreur);
+  if (!existingStudent) {
+    const error = new Error("student not found");
+    (error as any).status = 404;
+    return next(error);
   }
 
   const { name, age, email } = req.body;
 
   if (!name || !age || !email) {
-    const erreur = new Error("champs requiered");
-
-    (erreur as any).status = 400;
-
-    return next(erreur);
+    const error = new Error("fields required");
+    (error as any).status = 400;
+    return next(error);
   }
 
-  student.name = name;
-  student.age = age;
-  student.email = email;
+  const updatedStudent = studentRepository.updateStudent(id, {
+    name,
+    age,
+    email,
+  });
 
-  res.status(200).json(students);
+  res.status(200).json(updatedStudent);
 };
 
-// PATCH /etudiants/:id
-export const modifyPartiallyStudents = (
+// PATCH /students/:id
+export const updateStudentPartially = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const id = Number(req.params.id);
 
-  const student = students.find((e) => e.id === id);
+  const existingStudent = studentRepository.findStudentById(id);
 
-  if (!student) {
-    const erreur = new Error("Étudiant introuvable");
-    (erreur as any).status = 404;
-    return next(erreur);
+  if (!existingStudent) {
+    const error = new Error("student not found");
+    (error as any).status = 404;
+    return next(error);
   }
 
   const { name, age, email } = req.body;
 
-  if (name !== undefined) {
-    student.name = name;
-  }
+  const updatedStudent = studentRepository.updateStudentPartially(id, {
+    name,
+    age,
+    email,
+  });
 
-  if (age !== undefined) {
-    student.age = age;
-  }
-
-  if (email !== undefined) {
-    student.email = email;
-  }
-
-  res.status(200).json(students);
+  res.status(200).json(updatedStudent);
 };
 
-// DELETE /etudiants/:id
-export const deleteStudents = (
+// DELETE /students/:id
+export const deleteStudent = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   const id = Number(req.params.id);
 
-  const index = students.findIndex((e) => e.id === id);
+  const deletedStudent = studentRepository.deleteStudent(id);
 
-  if (index === -1) {
-    const erreur = new Error("students not found");
-    (erreur as any).status = 404;
-    return next(erreur);
+  if (!deletedStudent) {
+    const error = new Error("student not found");
+    (error as any).status = 404;
+    return next(error);
   }
-
-  const studentDeleted = students.splice(index, 1);
 
   res.status(200).json({
     message: "student deleted",
-    etudiant: studentDeleted[0],
+    student: deletedStudent,
   });
 };
