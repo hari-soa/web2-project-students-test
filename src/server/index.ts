@@ -1,7 +1,7 @@
 import express from "express";
 
-import studentsRoot from "../root/root";
-import { errorMiddleware } from "../errors/errors";
+import studentRoutes from "./routes/student.routes";
+import { errorMiddleware } from "./middlewares/error.middleware";
 
 const app = express();
 
@@ -9,15 +9,14 @@ const PORT = 3000;
 
 app.use(express.json());
 
-app.use(studentsRoot);
+app.get("/", (req, res) => {
+  res.send("API students is working !");
+});
+
+app.use(studentRoutes);
 
 app.use(errorMiddleware);
 
 app.listen(PORT, () => {
-  const PORT: 3000 = 3000;
   console.log(`Server running in http://localhost:${PORT}`);
-});
-
-app.get("/", (req, res) => {
-  res.send("API students is working !");
 });
