@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as studentRepository from "../repositories/student.repository";
-import { Student } from "../models/student.model";
+import { Student } from "../models/studentModel";
 
 // GET /students
 export const getAllStudents = (req: Request, res: Response) => {
@@ -28,11 +28,7 @@ export const getStudentById = (
 };
 
 // POST /students
-export const addStudent = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const addStudent = (req: Request, res: Response, next: NextFunction) => {
   const { name, age, email } = req.body;
 
   if (!name || !age || !email) {

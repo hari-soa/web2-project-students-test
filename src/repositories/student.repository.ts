@@ -1,4 +1,4 @@
-import { Student } from "../models/student.model";
+import { Student } from "../models/studentModel";
 
 // In-memory storage for students
 const students: Student[] = [];
