@@ -1,74 +1,67 @@
+import { pool } from "../configuration/database";
 import { Student } from "../models/studentModel";
 
-const students: Student[] = [];
-
-export const findAllStudents = (): Student[] => {
-  return students;
+export const findAllStudents = async (): Promise<Student[]> => {
+  const result = await pool.query("SELECT * FROM students ORDER BY id ASC");
+  return result.rows;
 };
 
-export const findStudentById = (id: number): Student | undefined => {
-  return students.find((student) => student.id === id);
-};
-
-export const getNextId = (): number => {
-  return students.length + 1;
-};
-
-export const createStudent = (student: Student): Student => {
-  students.push(student);
-  return student;
-};
-
-export const updateStudent = (
+export const findStudentById = async (
   id: number,
-  data: { name: string; age: number; email: string },
-): Student | undefined => {
-  const student = findStudentById(id);
-
-  if (!student) {
-    return undefined;
-  }
-
-  student.name = data.name;
-  student.age = data.age;
-  student.email = data.email;
-
-  return student;
+): Promise<Student | undefined> => {
+  const result = await pool.query("SELECT * FROM students WHERE id = $1", [id]);
+  return result.rows[0];
 };
 
-export const updateStudentPartially = (
+export const createStudent = async (
+  student: Omit<Student, "id">,
+): Promise<Student> => {
+  const { first_name, last_name, age, email } = student;
+  const result = await pool.query(
+    "INSERT INTO students (first_name, last_name, age, email) VALUES ($1, $2, $3, $4) RETURNING *",
+    [first_name, last_name, age, email],
+  );
+  return result.rows[0];
+};
+
+export const updateStudent = async (
+  id: number,
+  data: Omit<Student, "id">,
+): Promise<Student | undefined> => {
+  const { first_name, last_name, age, email } = data;
+  const result = await pool.query(
+    "UPDATE students SET first_name = $1, last_name = $2, age = $3, email = $4 WHERE id = $5 RETURNING *",
+    [first_name, last_name, age, email, id],
+  );
+  return result.rows[0];
+};
+
+export const updateStudentPartially = async (
   id: number,
   data: Partial<Omit<Student, "id">>,
-): Student | undefined => {
-  const student = findStudentById(id);
+): Promise<Student | undefined> => {
+  const currentStudent = await findStudentById(id);
+  if (!currentStudent) return undefined;
 
-  if (!student) {
-    return undefined;
-  }
+  const updatedFirstName = data.first_name ?? currentStudent.first_name;
+  const updatedLastName = data.last_name ?? currentStudent.last_name;
+  const updatedAge = data.age ?? currentStudent.age;
+  const updatedEmail = data.email ?? currentStudent.email;
 
-  if (data.name !== undefined) {
-    student.name = data.name;
-  }
+  const result = await pool.query(
+    "UPDATE students SET first_name = $1, last_name = $2, age = $3, email = $4 WHERE id = $5 RETURNING *",
+    [updatedFirstName, updatedLastName, updatedAge, updatedEmail, id],
+  );
 
-  if (data.age !== undefined) {
-    student.age = data.age;
-  }
-
-  if (data.email !== undefined) {
-    student.email = data.email;
-  }
-
-  return student;
+  return result.rows[0];
 };
 
-export const deleteStudent = (id: number): Student | undefined => {
-  const index = students.findIndex((student) => student.id === id);
-
-  if (index === -1) {
-    return undefined;
-  }
-
-  const deletedStudent = students.splice(index, 1);
-
-  return deletedStudent[0];
+export const deleteStudent = async (
+  id: number,
+): Promise<Student | undefined> => {
+  const result = await pool.query(
+    "DELETE FROM students WHERE id = $1 RETURNING *",
+    [id],
+  );
+  return result.rows[0];
 };
