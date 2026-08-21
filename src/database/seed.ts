@@ -10,7 +10,7 @@ const seedTeachers = async () => {
     await pool.query(schemaSql);
     console.log("Database schema initialized successfully.");
 
-    const defaultPassword = await bcrypt.hash("Helloworld!", 8);
+    const defaultPassword = await bcrypt.hash("Teacher2026!", 10);
 
     const authorizedTeachers = [
       { first_name: "Rakoto", last_name: "Koto", email: "rakoto@gmail.com" },
