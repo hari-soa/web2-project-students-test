@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 
 import studentRoutes from "../routes/studentRoutes";
 import { errorMiddleware } from "../middlewares/error";
@@ -7,6 +8,7 @@ const app = express();
 
 const PORT = 3000;
 
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
