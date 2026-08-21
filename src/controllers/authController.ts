@@ -43,8 +43,6 @@ export const loginUser = async (
 ) => {
   try {
     const { identifier, password } = req.body;
-
-    // Recherche uniquement parmi les utilisateurs enregistrés en base
     const user = await userRepository.findUserByIdentifier(identifier);
 
     if (!user || !(await bcrypt.compare(password, user.password!))) {
