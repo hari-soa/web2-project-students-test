@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Dashboard } from "./components/dashboard";
+import { Login } from "./components/Login";
 
 export default function App() {
   const [token, setToken] = useState<string | null>(
@@ -7,19 +8,7 @@ export default function App() {
   );
 
   if (!token) {
-    return (
-      <div style={{ padding: "2rem", textAlign: "center" }}>
-        <h2>Teacher Login</h2>
-        <button
-          onClick={() => {
-            setToken("demo_token");
-            localStorage.setItem("token", "demo_token");
-          }}
-        >
-          Simulate Login
-        </button>
-      </div>
-    );
+    return <Login onLoginSuccess={(newToken) => setToken(newToken)} />;
   }
 
   return (
