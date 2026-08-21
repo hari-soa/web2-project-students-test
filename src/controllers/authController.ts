@@ -43,31 +43,27 @@ export const loginUser = async (
 ) => {
   try {
     const { identifier, password } = req.body;
-    if (!identifier || !password) {
-      const error = new Error("Name/Reference/Email and password are required");
-      (error as any).status = 400;
-      return next(error);
-    }
 
+    // Recherche uniquement parmi les utilisateurs enregistrés en base
     const user = await userRepository.findUserByIdentifier(identifier);
+
     if (!user || !(await bcrypt.compare(password, user.password!))) {
-      const error = new Error("Invalid credentials");
+      const error = new Error("Unauthorized access. Invalid credentials.");
       (error as any).status = 401;
       return next(error);
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: "8h",
-    });
-    res.status(200).json({
-      token,
-      user: {
+    const token = jwt.sign(
+      {
         id: user.id,
-        first_name: user.first_name,
-        last_name: user.last_name,
         email: user.email,
+        name: `${user.first_name} ${user.last_name}`,
       },
-    });
+      process.env.JWT_SECRET || "default_secret_key",
+      { expiresIn: "8h" },
+    );
+
+    res.status(200).json({ token, user: { id: user.id, email: user.email } });
   } catch (error) {
     next(error);
   }
