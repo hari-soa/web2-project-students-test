@@ -1,132 +1,155 @@
 import { Request, Response, NextFunction } from "express";
 import * as studentRepository from "../repositories/studentRepository";
-import { Student } from "../models/studentModel";
 
 // GET /students
-export const getAllStudents = (req: Request, res: Response) => {
-  const students = studentRepository.findAllStudents();
-  res.status(200).json(students);
+export const getAllStudents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const students = await studentRepository.findAllStudents();
+    res.status(200).json(students);
+  } catch (error) {
+    next(error);
+  }
 };
 
 // GET /students/:id
-export const getStudentById = (
+export const getStudentById = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const id = Number(req.params.id);
+  try {
+    const id = Number(req.params.id);
+    const student = await studentRepository.findStudentById(id);
 
-  const student = studentRepository.findStudentById(id);
+    if (!student) {
+      const error = new Error("student not found");
+      (error as any).status = 404;
+      return next(error);
+    }
 
-  if (!student) {
-    const error = new Error("student not found");
-    (error as any).status = 404;
-    return next(error);
+    res.status(200).json(student);
+  } catch (error) {
+    next(error);
   }
-
-  res.status(200).json(student);
 };
 
 // POST /students
-export const addStudent = (req: Request, res: Response, next: NextFunction) => {
-  const { name, age, email } = req.body;
+export const addStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { first_name, last_name, age, email } = req.body;
 
-  if (!name || !age || !email) {
-    const error = new Error("name, age, email required");
-    (error as any).status = 400;
-    return next(error);
+    if (!first_name || !last_name || !age || !email) {
+      const error = new Error("first_name, last_name, age, email required");
+      (error as any).status = 400;
+      return next(error);
+    }
+
+    const newStudent = await studentRepository.createStudent({
+      first_name,
+      last_name,
+      age,
+      email,
+    });
+
+    res.status(201).json(newStudent);
+  } catch (error) {
+    next(error);
   }
-
-  const newStudent: Student = {
-    id: studentRepository.getNextId(),
-    name,
-    age,
-    email,
-  };
-
-  studentRepository.createStudent(newStudent);
-
-  res.status(201).json(newStudent);
 };
 
 // PUT /students/:id
-export const updateStudent = (
+export const updateStudent = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const id = Number(req.params.id);
+  try {
+    const id = Number(req.params.id);
+    const { first_name, last_name, age, email } = req.body;
 
-  const existingStudent = studentRepository.findStudentById(id);
+    if (!first_name || !last_name || !age || !email) {
+      const error = new Error("fields required");
+      (error as any).status = 400;
+      return next(error);
+    }
 
-  if (!existingStudent) {
-    const error = new Error("student not found");
-    (error as any).status = 404;
-    return next(error);
+    const updatedStudent = await studentRepository.updateStudent(id, {
+      first_name,
+      last_name,
+      age,
+      email,
+    });
+
+    if (!updatedStudent) {
+      const error = new Error("student not found");
+      (error as any).status = 404;
+      return next(error);
+    }
+
+    res.status(200).json(updatedStudent);
+  } catch (error) {
+    next(error);
   }
-
-  const { name, age, email } = req.body;
-
-  if (!name || !age || !email) {
-    const error = new Error("fields required");
-    (error as any).status = 400;
-    return next(error);
-  }
-
-  const updatedStudent = studentRepository.updateStudent(id, {
-    name,
-    age,
-    email,
-  });
-
-  res.status(200).json(updatedStudent);
 };
 
 // PATCH /students/:id
-export const updateStudentPartially = (
+export const updateStudentPartially = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const id = Number(req.params.id);
+  try {
+    const id = Number(req.params.id);
+    const { first_name, last_name, age, email } = req.body;
 
-  const existingStudent = studentRepository.findStudentById(id);
+    const updatedStudent = await studentRepository.updateStudentPartially(id, {
+      first_name,
+      last_name,
+      age,
+      email,
+    });
 
-  if (!existingStudent) {
-    const error = new Error("student not found");
-    (error as any).status = 404;
-    return next(error);
+    if (!updatedStudent) {
+      const error = new Error("student not found");
+      (error as any).status = 404;
+      return next(error);
+    }
+
+    res.status(200).json(updatedStudent);
+  } catch (error) {
+    next(error);
   }
-
-  const { name, age, email } = req.body;
-
-  const updatedStudent = studentRepository.updateStudentPartially(id, {
-    name,
-    age,
-    email,
-  });
-
-  res.status(200).json(updatedStudent);
 };
 
 // DELETE /students/:id
-export const deleteStudent = (
+export const deleteStudent = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const id = Number(req.params.id);
+  try {
+    const id = Number(req.params.id);
+    const deletedStudent = await studentRepository.deleteStudent(id);
 
-  const deletedStudent = studentRepository.deleteStudent(id);
+    if (!deletedStudent) {
+      const error = new Error("student not found");
+      (error as any).status = 404;
+      return next(error);
+    }
 
-  if (!deletedStudent) {
-    const error = new Error("student not found");
-    (error as any).status = 404;
-    return next(error);
+    res.status(200).json({
+      message: "student deleted",
+      student: deletedStudent,
+    });
+  } catch (error) {
+    next(error);
   }
-
-  res.status(200).json({
-    message: "student deleted",
-    student: deletedStudent,
-  });
 };
