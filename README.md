@@ -19,16 +19,33 @@ A full-stack web application designed for school administration to manage studen
 ## Project Structure
 
 ```text
-├── frontend/             # React application (UI)
+students/
+├── frontend/                   # React Frontend Client
 │   ├── src/
-│   │   ├── components/   # React UI components (Login, StudentList, etc.)
-│   │   └── App.tsx       # Main React entry component
-├── src/                  # Express Node.js backend
-│   ├── configuration/    # Database connection setup
-│   ├── controllers/      # API route handlers & logic
-│   ├── database/         # SQL schema & seed files
-│   └── index.ts          # Server entry point
-└── README.md
+│   │   ├── components/
+│   │   │   ├── dashboard.tsx   # Dashboard view for managed data
+│   │   │   └── Login.tsx       # Authentication interface
+│   │   ├── App.tsx             # Root application component
+│   │   ├── main.tsx            # Entry point for React DOM
+│   │   ├── index.css           # Global frontend styles
+│   │   └── vite-env.d.ts       # Vite environment types
+│   ├── index.html              # HTML template
+│   ├── package.json            # Frontend dependencies
+│   └── vite.config.ts          # Vite bundler configuration
+│
+├── src/                        # Node.js / Express Backend API
+│   ├── configuration/          # DB connection setup (database.ts)
+│   ├── controllers/            # Route handlers (authController, studentController)
+│   ├── database/               # SQL schema (schema.sql) & seed script (seed.ts)
+│   ├── middlewares/            # Custom JWT & error handling middlewares
+│   ├── models/                 # Data interfaces & TypeScript definitions
+│   ├── repositories/           # Database access layer (queries & persistence)
+│   ├── routes/                 # API endpoint routing declarations
+│   └── index.ts                # Main Express server entry point
+│
+├── .env                        # Environment variables configuration
+├── package.json                # Backend dependencies & run scripts
+└── README.md                   # Project documentation
 ```
 
 ## Setup and Installation
