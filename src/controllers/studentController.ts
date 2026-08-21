@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as studentRepository from "../repositories/studentRepository";
 
-// GET /students
 export const getAllStudents = async (
   req: Request,
   res: Response,
@@ -15,7 +14,6 @@ export const getAllStudents = async (
   }
 };
 
-// GET /students/:id
 export const getStudentById = async (
   req: Request,
   res: Response,
@@ -37,7 +35,6 @@ export const getStudentById = async (
   }
 };
 
-// POST /students
 export const addStudent = async (
   req: Request,
   res: Response,
@@ -65,7 +62,6 @@ export const addStudent = async (
   }
 };
 
-// PUT /students/:id
 export const updateStudent = async (
   req: Request,
   res: Response,
@@ -100,7 +96,6 @@ export const updateStudent = async (
   }
 };
 
-// PATCH /students/:id
 export const updateStudentPartially = async (
   req: Request,
   res: Response,
@@ -129,7 +124,6 @@ export const updateStudentPartially = async (
   }
 };
 
-// DELETE /students/:id
 export const deleteStudent = async (
   req: Request,
   res: Response,
@@ -149,6 +143,19 @@ export const deleteStudent = async (
       message: "student deleted",
       student: deletedStudent,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAgeStats = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const stats = await studentRepository.getAgeStatistics();
+    res.status(200).json(stats);
   } catch (error) {
     next(error);
   }
