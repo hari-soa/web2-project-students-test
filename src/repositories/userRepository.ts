@@ -10,11 +10,12 @@ export const createUser = async (user: Omit<User, "id">): Promise<User> => {
   return result.rows[0];
 };
 
-export const findUserByEmail = async (
-  email: string,
+export const findUserByIdentifier = async (
+  identifier: string,
 ): Promise<User | undefined> => {
-  const result = await pool.query("SELECT * FROM users WHERE email = $1", [
-    email,
-  ]);
+  const result = await pool.query(
+    "SELECT * FROM users WHERE email = $1 OR LOWER(last_name) = LOWER($1)",
+    [identifier],
+  );
   return result.rows[0];
 };

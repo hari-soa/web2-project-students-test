@@ -17,9 +17,9 @@ export const registerUser = async (
       (error as any).status = 400;
       return next(error);
     }
-    const existingUser = await userRepository.findUserByEmail(email);
+    const existingUser = await userRepository.findUserByIdentifier(email);
     if (existingUser) {
-      const error = new Error("Email already registered");
+      const error = new Error("User already registered with this email");
       (error as any).status = 400;
       return next(error);
     }
@@ -42,27 +42,32 @@ export const loginUser = async (
   next: NextFunction,
 ) => {
   try {
-    const { email, password } = req.body;
-    const user = await userRepository.findUserByEmail(email);
+    const { identifier, password } = req.body;
+    if (!identifier || !password) {
+      const error = new Error("Name/Reference/Email and password are required");
+      (error as any).status = 400;
+      return next(error);
+    }
+
+    const user = await userRepository.findUserByIdentifier(identifier);
     if (!user || !(await bcrypt.compare(password, user.password!))) {
       const error = new Error("Invalid credentials");
       (error as any).status = 401;
       return next(error);
     }
+
     const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
       expiresIn: "8h",
     });
-    res
-      .status(200)
-      .json({
-        token,
-        user: {
-          id: user.id,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          email: user.email,
-        },
-      });
+    res.status(200).json({
+      token,
+      user: {
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+      },
+    });
   } catch (error) {
     next(error);
   }
