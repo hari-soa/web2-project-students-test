@@ -91,7 +91,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
               required
-              placeholder="e.g. Dupont or teacher@school.edu"
+              placeholder="rakoto@gmail.com"
               style={{
                 width: "100%",
                 padding: "0.75rem",
