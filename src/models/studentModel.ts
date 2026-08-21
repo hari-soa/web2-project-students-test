@@ -1,0 +1,12 @@
+export interface Student {
+  id?: number;
+  first_name: string;
+  last_name: string;
+  age: number;
+  email: string;
+}
+
+export interface AgeStatistic {
+  age: number;
+  count: number;
+}
