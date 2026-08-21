@@ -1,0 +1,16 @@
+:root {
+  --bg-pastel: #fdfbf7;
+  --card-pastel: #ffffff;
+  --blue-pastel: #d0e1fd;
+  --green-pastel: #d1e7dd;
+  --rose-pastel: #f8d7da;
+  --text-dark: #4a4a4a;
+  --border-subtle: #eae6df;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-pastel);
+  color: var(--text-dark);
+  font-family: "Inter", sans-serif;
+}
