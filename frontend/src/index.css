@@ -1,0 +1,16 @@
+:root {
+  --bg-pastel: #faf7f2;
+  --card-bg: #ffffff;
+  --pastel-blue: #d0e1fd;
+  --pastel-green: #d1e7dd;
+  --pastel-rose: #f8d7da;
+  --text-primary: #3d3d3d;
+  --border-subtle: #ece8e1;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-pastel);
+  color: var(--text-primary);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
