@@ -65,6 +65,8 @@ export const Dashboard: React.FC<{ token: string; onLogout: () => void }> = ({
     ],
   };
 
+  const cellStyle = { padding: "0.75rem" };
+
   return (
     <div style={{ padding: "2rem", maxWidth: "1000px", margin: "0 auto" }}>
       <header
@@ -117,11 +119,11 @@ export const Dashboard: React.FC<{ token: string; onLogout: () => void }> = ({
                 textAlign: "left",
               }}
             >
-              <th style={{ padding: "0.75rem" }}>ID</th>
-              <th style={{ padding: "0.75rem" }}>First Name</th>
-              <th style={{ padding: "0.75rem" }}>Last Name</th>
-              <th style={{ padding: "0.75rem" }}>Age</th>
-              <th style={{ padding: "0.75rem" }}>Email</th>
+              <th style={cellStyle}>ID</th>
+              <th style={cellStyle}>First Name</th>
+              <th style={cellStyle}>Last Name</th>
+              <th style={cellStyle}>Age</th>
+              <th style={cellStyle}>Email</th>
             </tr>
           </thead>
           <tbody>
@@ -130,11 +132,11 @@ export const Dashboard: React.FC<{ token: string; onLogout: () => void }> = ({
                 key={student.id}
                 style={{ borderBottom: "1px solid var(--border-subtle)" }}
               >
-                <td style={{ padding: "0.75rem" }}>{student.id}</td>
-                <td style={{ padding: "0.75rem" }}>{student.first_name}</td>
-                <td style={{ padding: "0.75rem" }}>{student.last_name}</td>
-                <td style={{ padding: "0.75rem" }}>{student.age}</td>
-                <td style={{ padding: "0.75rem" }}>{student.email}</td>
+                <td style={cellStyle}>{student.id}</td>
+                <td style={cellStyle}>{student.first_name}</td>
+                <td style={cellStyle}>{student.last_name}</td>
+                <td style={cellStyle}>{student.age}</td>
+                <td style={cellStyle}>{student.email}</td>
               </tr>
             ))}
           </tbody>
