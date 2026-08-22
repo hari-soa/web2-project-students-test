@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "default_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET!;
 
 export interface AuthenticatedRequest extends Request {
   user?: any;
@@ -17,14 +17,14 @@ export const authenticateToken = (
 
   if (!token) {
     const error = new Error("Authentication token missing");
-    (error as any).status = 401;
+    res.status(401);
     return next(error);
   }
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
       const error = new Error("Invalid or expired token");
-      (error as any).status = 403;
+      res.status(403);
       return next(error);
     }
     req.user = user;

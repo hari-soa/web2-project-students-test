@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import * as userRepository from "../repositories/userRepository";
 
-const JWT_SECRET = process.env.JWT_SECRET || "default_secret_key";
+const JWT_SECRET = process.env.JWT_SECRET!;
 
 export const registerUser = async (
   req: Request,
@@ -14,13 +14,13 @@ export const registerUser = async (
     const { first_name, last_name, email, password } = req.body;
     if (!first_name || !last_name || !email || !password) {
       const error = new Error("All fields are required");
-      (error as any).status = 400;
+      res.status(400);
       return next(error);
     }
     const existingUser = await userRepository.findUserByIdentifier(email);
     if (existingUser) {
       const error = new Error("User already registered with this email");
-      (error as any).status = 400;
+      res.status(400);
       return next(error);
     }
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -47,7 +47,7 @@ export const loginUser = async (
 
     if (!user || !(await bcrypt.compare(password, user.password!))) {
       const error = new Error("Unauthorized access. Invalid credentials.");
-      (error as any).status = 401;
+      res.status(401);
       return next(error);
     }
 

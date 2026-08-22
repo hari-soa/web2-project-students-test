@@ -22,7 +22,13 @@ const INPUT_STYLE =
 const BUTTON_STYLE =
   "w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors cursor-pointer mt-2";
 
-export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
+interface LoginProps {
+  onLoginSuccess: (token: string) => void;
+}
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+export const Login = ({ onLoginSuccess }: LoginProps) => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +38,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identifier, password }),
@@ -45,8 +51,12 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
       localStorage.setItem("token", data.token);
       onLoginSuccess(data.token);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred");
+      }
     }
   };
 

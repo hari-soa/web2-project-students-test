@@ -24,7 +24,7 @@ export const getStudentById = async (
     const student = await studentRepository.findStudentById(id);
     if (!student) {
       const error = new Error("Student not found");
-      (error as any).status = 404;
+      res.status(404);
       return next(error);
     }
     res.status(200).json(student);
@@ -42,7 +42,7 @@ export const addStudent = async (
     const { first_name, last_name, age, email } = req.body;
     if (!first_name || !last_name || !age || !email) {
       const error = new Error("All fields are required");
-      (error as any).status = 400;
+      res.status(400);
       return next(error);
     }
     const newStudent = await studentRepository.createStudent({
@@ -73,7 +73,7 @@ export const updateStudent = async (
     });
     if (!updatedStudent) {
       const error = new Error("Student not found");
-      (error as any).status = 404;
+      res.status(404);
       return next(error);
     }
     res.status(200).json(updatedStudent);
@@ -95,7 +95,7 @@ export const updateStudentPartially = async (
     );
     if (!updatedStudent) {
       const error = new Error("Student not found");
-      (error as any).status = 404;
+      res.status(404);
       return next(error);
     }
     res.status(200).json(updatedStudent);
@@ -114,15 +114,13 @@ export const deleteStudent = async (
     const deletedStudent = await studentRepository.deleteStudent(id);
     if (!deletedStudent) {
       const error = new Error("Student not found");
-      (error as any).status = 404;
+      res.status(404);
       return next(error);
     }
-    res
-      .status(200)
-      .json({
-        message: "Student deleted successfully",
-        student: deletedStudent,
-      });
+    res.status(200).json({
+      message: "Student deleted successfully",
+      student: deletedStudent,
+    });
   } catch (error) {
     next(error);
   }

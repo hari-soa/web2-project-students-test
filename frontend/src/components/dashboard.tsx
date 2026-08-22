@@ -23,6 +23,7 @@ interface AgeStat {
   age: number;
   count: number;
 }
+
 interface Student {
   id: number;
   first_name: string;
@@ -31,20 +32,71 @@ interface Student {
   email: string;
 }
 
-export const Dashboard: React.FC<{ token: string; onLogout: () => void }> = ({
-  token,
-  onLogout,
-}) => {
+interface DashboardProps {
+  token: string;
+  onLogout: () => void;
+}
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+const CONTAINER_STYLE: React.CSSProperties = {
+  padding: "2rem",
+  maxWidth: "1000px",
+  margin: "0 auto",
+};
+
+const HEADER_STYLE: React.CSSProperties = {
+  display: "flex",
+  justifyContent: "space-between",
+  marginBottom: "2rem",
+};
+
+const LOGOUT_BUTTON_STYLE: React.CSSProperties = {
+  padding: "0.5rem 1rem",
+  backgroundColor: "var(--pastel-rose)",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+};
+
+const CARD_SECTION_STYLE: React.CSSProperties = {
+  backgroundColor: "var(--card-bg)",
+  padding: "1.5rem",
+  borderRadius: "12px",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
+  marginBottom: "2rem",
+};
+
+const TABLE_STYLE: React.CSSProperties = {
+  width: "100%",
+  borderCollapse: "collapse",
+};
+
+const TABLE_HEADER_ROW_STYLE: React.CSSProperties = {
+  backgroundColor: "var(--pastel-green)",
+  textAlign: "left",
+};
+
+const CELL_STYLE: React.CSSProperties = {
+  padding: "0.75rem",
+};
+
+const TABLE_ROW_STYLE: React.CSSProperties = {
+  borderBottom: "1px solid var(--border-subtle)",
+};
+
+export const Dashboard = ({ token, onLogout }: DashboardProps) => {
   const [stats, setStats] = useState<AgeStat[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/students/stats/age", {
+    fetch(`${API_URL}/students/stats/age`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
       .then(setStats);
-    fetch("http://localhost:3000/students", {
+
+    fetch(`${API_URL}/students`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -65,78 +117,40 @@ export const Dashboard: React.FC<{ token: string; onLogout: () => void }> = ({
     ],
   };
 
-  const cellStyle = { padding: "0.75rem" };
-
   return (
-    <div style={{ padding: "2rem", maxWidth: "1000px", margin: "0 auto" }}>
-      <header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "2rem",
-        }}
-      >
+    <div style={CONTAINER_STYLE}>
+      <header style={HEADER_STYLE}>
         <h2>Teacher Management Portal</h2>
-        <button
-          onClick={onLogout}
-          style={{
-            padding: "0.5rem 1rem",
-            backgroundColor: "var(--pastel-rose)",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
-        >
+        <button onClick={onLogout} style={LOGOUT_BUTTON_STYLE}>
           Logout
         </button>
       </header>
-      <section
-        style={{
-          backgroundColor: "var(--card-bg)",
-          padding: "1.5rem",
-          borderRadius: "12px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
-          marginBottom: "2rem",
-        }}
-      >
+
+      <section style={CARD_SECTION_STYLE}>
         <h3>Age Distribution Statistics</h3>
         <Bar data={chartData} />
       </section>
-      <section
-        style={{
-          backgroundColor: "var(--card-bg)",
-          padding: "1.5rem",
-          borderRadius: "12px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
-        }}
-      >
+
+      <section style={{ ...CARD_SECTION_STYLE, marginBottom: 0 }}>
         <h3>Student Roster</h3>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <table style={TABLE_STYLE}>
           <thead>
-            <tr
-              style={{
-                backgroundColor: "var(--pastel-green)",
-                textAlign: "left",
-              }}
-            >
-              <th style={cellStyle}>ID</th>
-              <th style={cellStyle}>First Name</th>
-              <th style={cellStyle}>Last Name</th>
-              <th style={cellStyle}>Age</th>
-              <th style={cellStyle}>Email</th>
+            <tr style={TABLE_HEADER_ROW_STYLE}>
+              <th style={CELL_STYLE}>ID</th>
+              <th style={CELL_STYLE}>First Name</th>
+              <th style={CELL_STYLE}>Last Name</th>
+              <th style={CELL_STYLE}>Age</th>
+              <th style={CELL_STYLE}>Email</th>
             </tr>
           </thead>
           <tbody>
             {students.map((student) => (
-              <tr
-                key={student.id}
-                style={{ borderBottom: "1px solid var(--border-subtle)" }}
-              >
-                <td style={cellStyle}>{student.id}</td>
-                <td style={cellStyle}>{student.first_name}</td>
-                <td style={cellStyle}>{student.last_name}</td>
-                <td style={cellStyle}>{student.age}</td>
-                <td style={cellStyle}>{student.email}</td>
+              <tr key={student.id} style={TABLE_ROW_STYLE}>
+                <td style={CELL_STYLE}>{student.id}</td>
+                <td style={CELL_STYLE}>{student.first_name}</td>
+                <td style={CELL_STYLE}>{student.last_name}</td>
+                <td style={CELL_STYLE}>{student.age}</td>
+                <td style={CELL_STYLE}>{student.email}</td>
               </tr>
             ))}
           </tbody>
