@@ -4,29 +4,88 @@ interface LoginProps {
   onLoginSuccess: (token: string) => void;
 }
 
-const CONTAINER_STYLE =
-  "min-h-screen flex items-center justify-center bg-gray-50 px-4";
-const CARD_STYLE =
-  "max-w-md w-full bg-white p-8 rounded-xl shadow-md border border-gray-100";
-const HEADING_STYLE = "text-2xl font-bold text-center text-gray-800 mb-6";
-const FORM_STYLE = "space-y-4";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-const ERROR_BOX_STYLE =
-  "p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg text-center font-medium";
+const CONTAINER_STYLE: React.CSSProperties = {
+  minHeight: "100vh",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "var(--bg-pastel, #f0f4f8)",
+  padding: "1rem",
+};
 
-const GROUP_STYLE = "flex flex-col gap-1.5";
-const LABEL_STYLE = "text-sm font-medium text-gray-700";
-const INPUT_STYLE =
-  "w-full px-3.5 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900 placeholder-gray-400 text-sm transition-all";
+const CARD_STYLE: React.CSSProperties = {
+  maxWidth: "400px",
+  width: "100%",
+  backgroundColor: "var(--card-bg, #ffffff)",
+  padding: "2rem",
+  borderRadius: "16px",
+  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
+  border: "1px solid #e2e8f0",
+};
 
-const BUTTON_STYLE =
-  "w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors cursor-pointer mt-2";
+const HEADING_STYLE: React.CSSProperties = {
+  fontSize: "1.5rem",
+  fontWeight: "bold",
+  textAlign: "center",
+  color: "#334155",
+  marginBottom: "1.5rem",
+};
 
-interface LoginProps {
-  onLoginSuccess: (token: string) => void;
-}
+const FORM_STYLE: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "1.25rem",
+};
 
-const API_URL = import.meta.env.VITE_API_URL;
+const ERROR_BOX_STYLE: React.CSSProperties = {
+  padding: "0.75rem",
+  backgroundColor: "#fef2f2",
+  border: "1px solid #fecaca",
+  color: "#dc2626",
+  fontSize: "0.875rem",
+  borderRadius: "8px",
+  textAlign: "center",
+  marginBottom: "1rem",
+};
+
+const GROUP_STYLE: React.CSSProperties = {
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.5rem",
+};
+
+const LABEL_STYLE: React.CSSProperties = {
+  fontSize: "0.875rem",
+  fontWeight: 600,
+  color: "#475569",
+};
+
+const INPUT_STYLE: React.CSSProperties = {
+  width: "100%",
+  padding: "0.625rem 0.875rem",
+  backgroundColor: "#f8fafc",
+  border: "1px solid #cbd5e1",
+  borderRadius: "8px",
+  fontSize: "0.875rem",
+  color: "#1e293b",
+  outline: "none",
+  boxSizing: "border-box",
+};
+
+const BUTTON_STYLE: React.CSSProperties = {
+  width: "100%",
+  padding: "0.75rem",
+  backgroundColor: "var(--pastel-green, #a8e6cf)",
+  color: "#1b4332",
+  fontWeight: "bold",
+  border: "none",
+  borderRadius: "8px",
+  cursor: "pointer",
+  marginTop: "0.5rem",
+  fontSize: "0.95rem",
+};
 
 export const Login = ({ onLoginSuccess }: LoginProps) => {
   const [identifier, setIdentifier] = useState("");
@@ -44,7 +103,9 @@ export const Login = ({ onLoginSuccess }: LoginProps) => {
         body: JSON.stringify({ identifier, password }),
       });
 
-      const data = await response.json();
+      const textData = await response.text();
+      const data = textData ? JSON.parse(textData) : {};
+
       if (!response.ok) {
         throw new Error(data.message);
       }
@@ -61,15 +122,15 @@ export const Login = ({ onLoginSuccess }: LoginProps) => {
   };
 
   return (
-    <div className={CONTAINER_STYLE}>
-      <div className={CARD_STYLE}>
-        <h2 className={HEADING_STYLE}>Teacher Login</h2>
+    <div style={CONTAINER_STYLE}>
+      <div style={CARD_STYLE}>
+        <h2 style={HEADING_STYLE}>Teacher Login</h2>
 
-        {error && <div className={ERROR_BOX_STYLE}>{error}</div>}
+        {error && <div style={ERROR_BOX_STYLE}>{error}</div>}
 
-        <form onSubmit={handleSubmit} className={FORM_STYLE}>
-          <div className={GROUP_STYLE}>
-            <label className={LABEL_STYLE} htmlFor="identifier">
+        <form onSubmit={handleSubmit} style={FORM_STYLE}>
+          <div style={GROUP_STYLE}>
+            <label style={LABEL_STYLE} htmlFor="identifier">
               Name, Reference or Email
             </label>
             <input
@@ -77,13 +138,13 @@ export const Login = ({ onLoginSuccess }: LoginProps) => {
               type="text"
               value={identifier}
               onChange={(e) => setIdentifier(e.target.value)}
-              className={INPUT_STYLE}
+              style={INPUT_STYLE}
               required
             />
           </div>
 
-          <div className={GROUP_STYLE}>
-            <label className={LABEL_STYLE} htmlFor="password">
+          <div style={GROUP_STYLE}>
+            <label style={LABEL_STYLE} htmlFor="password">
               Password
             </label>
             <input
@@ -91,12 +152,12 @@ export const Login = ({ onLoginSuccess }: LoginProps) => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={INPUT_STYLE}
+              style={INPUT_STYLE}
               required
             />
           </div>
 
-          <button type="submit" className={BUTTON_STYLE}>
+          <button type="submit" style={BUTTON_STYLE}>
             Sign In
           </button>
         </form>
