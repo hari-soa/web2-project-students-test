@@ -1,5 +1,6 @@
 import { pool } from "../configuration/database";
 import { Student } from "../models/studentModel";
+import { AgeStat } from "../models/userModel";
 
 export const findAllStudents = async (): Promise<Student[]> => {
   const result = await pool.query("SELECT * FROM students ORDER BY id ASC");
@@ -64,4 +65,11 @@ export const deleteStudent = async (
     [id],
   );
   return result.rows[0];
+};
+
+export const getAgeStatistics = async (): Promise<AgeStat[]> => {
+  const result = await pool.query(
+    "SELECT age, COUNT(*)::int as count FROM students GROUP BY age ORDER BY age ASC",
+  );
+  return result.rows;
 };
